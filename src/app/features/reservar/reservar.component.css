@@ -1,0 +1,90 @@
+
+.reservar-page {
+
+  padding-top: 140px;
+  padding-bottom: 80px;
+
+  min-height: 100vh;
+
+}
+
+.reservar-card {
+
+  max-width: 700px;
+
+  margin: auto;
+
+  padding: 40px;
+
+  background: var(--color-surface);
+
+  border: 1px solid rgba(255,255,255,.05);
+
+}
+
+.header {
+
+  text-align: center;
+
+  margin-bottom: 40px;
+
+}
+
+.badge {
+
+  color: var(--color-primary);
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  font-size: 12px;
+  
+
+}
+
+.header h1 {
+
+  margin-top: 10px;
+
+  margin-bottom: 15px;
+
+}
+
+form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 20px;
+
+}
+
+mat-form-field {
+
+  width: 100%;
+
+}
+
+mat-label {
+  color: whitesmoke;
+}
+
+.btn-reservar {
+
+  height: 54px;
+
+  margin-top: 10px;
+
+}
+
+@media (max-width: 768px) {
+
+  .reservar-card {
+
+    padding: 25px;
+
+  }
+
+}

@@ -1,0 +1,116 @@
+<div class="gestor-servicios">
+
+  <h2>
+    {{ editandoId ? 'Editar servicio' : 'Nuevo servicio' }}
+  </h2>
+
+  <form
+    [formGroup]="servicioForm"
+    (ngSubmit)="guardar()"
+    class="servicio-form"
+  >
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Nombre</mat-label>
+
+      <input
+        matInput
+        type="text"
+        formControlName="nombre"
+      >
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Duración (min)</mat-label>
+
+      <input
+        matInput
+        type="number"
+        formControlName="duracionMinutos"
+      >
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Precio</mat-label>
+
+      <input
+        matInput
+        type="number"
+        formControlName="precio"
+      >
+
+    </mat-form-field>
+
+    <div class="form-acciones">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="servicioForm.invalid"
+      >
+        {{ editandoId ? 'Guardar cambios' : 'Agregar' }}
+      </button>
+
+      <button
+        *ngIf="editandoId"
+        mat-stroked-button
+        type="button"
+        (click)="cancelarEdicion()"
+      >
+        Cancelar
+      </button>
+
+    </div>
+
+  </form>
+
+  <div class="servicios-lista">
+
+    <div
+      *ngFor="let servicio of (servicios$ | async)"
+      class="card servicio-item"
+    >
+
+      <div class="servicio-info">
+
+        <h4>{{ servicio.nombre }}</h4>
+
+        <p>
+          {{ servicio.duracionMinutos }} min —
+          {{ servicio.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}
+        </p>
+
+      </div>
+
+      <div class="servicio-acciones">
+
+        <button
+          mat-icon-button
+          (click)="editar(servicio)"
+          aria-label="Editar servicio"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="eliminar(servicio)"
+          aria-label="Eliminar servicio"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,236 @@
+<section class="reservar-page">
+
+  <div class="container">
+
+    <mat-card class="card reservar-card">
+
+      <div class="header">
+
+        <span class="badge">
+          Reserva Online
+        </span>
+
+        <h1>
+          Reserva tu Turno
+        </h1>
+
+        <p>
+          Elegí el servicio, fecha y horario que mejor se adapte a vos.
+        </p>
+
+      </div>
+
+      <form
+        [formGroup]="turnoForm"
+        (ngSubmit)="reservar()"
+      >
+
+        <!-- NOMBRE -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Nombre completo
+          </mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="nombre"
+            autocomplete="name"
+          >
+
+          <mat-error
+            *ngIf="turnoForm.get('nombre')?.hasError('required')">
+
+            Ingresá tu nombre
+
+          </mat-error>
+
+          <mat-error
+            *ngIf="turnoForm.get('nombre')?.hasError('minlength')">
+
+            El nombre debe tener al menos 3 caracteres
+
+          </mat-error>
+
+        </mat-form-field>
+
+
+        <!-- TELÉFONO -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Teléfono
+          </mat-label>
+
+          <input
+            matInput
+            type="tel"
+            formControlName="telefono"
+            autocomplete="tel"
+            inputmode="numeric"
+          >
+
+          <mat-error
+            *ngIf="turnoForm.get('telefono')?.hasError('required')">
+
+            Ingresá tu teléfono
+
+          </mat-error>
+
+          <mat-error
+            *ngIf="turnoForm.get('telefono')?.hasError('pattern')">
+
+            Ingresá un teléfono válido
+
+          </mat-error>
+
+        </mat-form-field>
+
+
+        <!-- SERVICIO -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Servicio
+          </mat-label>
+
+          <mat-select formControlName="servicio">
+
+            <ng-container *ngIf="servicios$ | async as servicios">
+
+              <mat-option
+                *ngFor="let servicio of servicios"
+                [value]="servicio.nombre"
+              >
+                {{ servicio.nombre }} — {{ servicio.duracionMinutos }} min
+              </mat-option>
+
+            </ng-container>
+
+          </mat-select>
+
+          <mat-hint
+            *ngIf="(servicios$ | async)?.length === 0">
+
+            Todavía no hay servicios cargados
+
+          </mat-hint>
+
+          <mat-error
+            *ngIf="turnoForm.get('servicio')?.hasError('required')">
+
+            Seleccioná un servicio
+
+          </mat-error>
+
+        </mat-form-field>
+
+
+        <!-- FECHA -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Fecha
+          </mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [matDatepickerFilter]="fechaPermitida"
+            formControlName="fecha"
+            readonly
+          >
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker
+            #picker>
+          </mat-datepicker>
+
+          <mat-error
+            *ngIf="turnoForm.get('fecha')?.hasError('required')">
+
+            Seleccioná una fecha
+
+          </mat-error>
+
+        </mat-form-field>
+
+
+        <!-- HORARIO -->
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Horario
+          </mat-label>
+
+          <mat-select
+            formControlName="hora"
+            [disabled]="!turnoForm.get('fecha')?.value"
+          >
+
+            <mat-option
+              *ngFor="let hora of horasLibres"
+              [value]="hora">
+
+              {{ hora }}
+
+            </mat-option>
+
+          </mat-select>
+
+          <mat-hint
+            *ngIf="!turnoForm.get('fecha')?.value">
+
+            Primero seleccioná una fecha
+
+          </mat-hint>
+
+          <mat-hint
+            *ngIf="
+              turnoForm.get('fecha')?.value &&
+              horasLibres.length === 0
+            ">
+
+            No hay horarios disponibles para esta fecha
+
+          </mat-hint>
+
+          <mat-error
+            *ngIf="turnoForm.get('hora')?.hasError('required')">
+
+            Seleccioná un horario
+
+          </mat-error>
+
+        </mat-form-field>
+
+
+        <!-- BOTÓN -->
+
+        <button
+          mat-raised-button
+          type="submit"
+          class="btn-reservar"
+          [disabled]="turnoForm.invalid"
+        >
+          Reservar Turno
+
+        </button>
+
+      </form>
+
+    </mat-card>
+
+  </div>
+
+</section>

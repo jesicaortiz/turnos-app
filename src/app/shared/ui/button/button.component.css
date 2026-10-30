@@ -1,0 +1,49 @@
+.btn {
+
+  width: auto;
+
+  min-height: 52px;
+
+  padding: 0 32px;
+
+  border: none;
+
+  border-radius: 999px;
+
+  background: var(--color-primary);
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all .25s ease;
+
+}
+
+.btn:hover {
+
+  transform: translateY(-2px);
+
+  background: var(--color-primary-hover);
+
+  box-shadow: var(--shadow-card);
+
+}
+
+.btn:disabled {
+
+  opacity: .5;
+
+  cursor: not-allowed;
+
+}
+
+.full {
+
+  width: 100%;
+
+}

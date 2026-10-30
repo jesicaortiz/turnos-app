@@ -1,0 +1,130 @@
+.dashboard-page {
+
+  padding-top: 140px;
+  padding-bottom: 80px;
+
+  min-height: 100vh;
+
+}
+
+.header {
+
+  text-align: center;
+
+  margin-bottom: 40px;
+
+}
+
+.badge {
+
+  color: var(--color-primary);
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  font-size: 12px;
+
+}
+
+.header h1 {
+
+  margin-top: 10px;
+
+  margin-bottom: 15px;
+
+}
+
+.vacio {
+
+  text-align: center;
+
+  margin-top: 40px;
+
+}
+
+.turnos-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+  gap: 20px;
+
+}
+
+.turno-card {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+.turno-top {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 8px;
+
+}
+
+.dato {
+
+  margin: 0;
+
+  font-size: .9rem;
+
+}
+
+.dato strong {
+
+  color: var(--color-text);
+
+}
+
+.turno-acciones {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 16px;
+
+}
+
+mat-chip.chip-pendiente {
+
+  --mdc-chip-elevated-container-color: var(--color-warning);
+
+}
+
+mat-chip.chip-confirmado {
+
+  --mdc-chip-elevated-container-color: var(--color-success);
+
+}
+
+mat-chip.chip-cancelado {
+
+  --mdc-chip-elevated-container-color: var(--color-error);
+
+}
+
+@media (max-width: 600px) {
+
+  .turnos-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}

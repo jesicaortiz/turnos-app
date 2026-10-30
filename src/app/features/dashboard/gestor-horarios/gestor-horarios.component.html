@@ -1,0 +1,185 @@
+<div class="gestor-horarios">
+
+  <h2>Horarios de atención</h2>
+
+  <p
+    *ngIf="cargando"
+    class="estado"
+  >
+    Cargando horarios...
+  </p>
+
+  <form
+    *ngIf="!cargando"
+    [formGroup]="form"
+    (ngSubmit)="guardar()"
+  >
+
+    <mat-form-field
+      appearance="outline"
+      class="campo-duracion"
+    >
+
+      <mat-label>Duración de cada turno (min)</mat-label>
+
+      <input
+        matInput
+        type="number"
+        formControlName="duracionTurnoMinutos"
+      >
+
+    </mat-form-field>
+
+    <div formArrayName="dias">
+
+      <div
+        *ngFor="let indice of ordenDias"
+        [formGroupName]="indice"
+        class="card dia-fila"
+      >
+
+        <mat-slide-toggle formControlName="activo">
+          {{ nombresDias[indice] }}
+        </mat-slide-toggle>
+
+        <div
+          *ngIf="diasArray.at(indice).get('activo')?.value"
+          class="dia-horas"
+        >
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Abre</mat-label>
+
+            <input
+              matInput
+              type="time"
+              formControlName="desde"
+            >
+
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Cierra</mat-label>
+
+            <input
+              matInput
+              type="time"
+              formControlName="hasta"
+            >
+
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Pausa desde</mat-label>
+
+            <input
+              matInput
+              type="time"
+              formControlName="pausaDesde"
+            >
+
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Pausa hasta</mat-label>
+
+            <input
+              matInput
+              type="time"
+              formControlName="pausaHasta"
+            >
+
+          </mat-form-field>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <h3>Días cerrados</h3>
+
+    <p class="ayuda">
+      Feriados, vacaciones o cualquier fecha puntual en la que no atiendas.
+    </p>
+
+    <div class="cierres-form">
+
+      <mat-form-field appearance="outline">
+
+        <mat-label>Fecha</mat-label>
+
+        <input
+          matInput
+          [matDatepicker]="pickerCierre"
+          [formControl]="nuevoCierre"
+          readonly
+        >
+
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="pickerCierre"
+        >
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #pickerCierre></mat-datepicker>
+
+      </mat-form-field>
+
+      <button
+        mat-stroked-button
+        type="button"
+        [disabled]="!nuevoCierre.value"
+        (click)="agregarCierre()"
+      >
+        Agregar día cerrado
+      </button>
+
+    </div>
+
+    <div class="cierres-lista">
+
+      <span
+        *ngFor="let fecha of diasCerrados"
+        class="cierre"
+      >
+
+        {{ fecha }}
+
+        <button
+          mat-icon-button
+          type="button"
+          (click)="quitarCierre(fecha)"
+          aria-label="Quitar día cerrado"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+
+      </span>
+
+      <p
+        *ngIf="diasCerrados.length === 0"
+        class="ayuda"
+      >
+        No hay días cerrados cargados.
+      </p>
+
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      class="btn-guardar"
+      [disabled]="form.invalid"
+    >
+      Guardar horarios
+    </button>
+
+  </form>
+
+</div>

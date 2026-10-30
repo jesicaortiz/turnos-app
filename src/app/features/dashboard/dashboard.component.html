@@ -1,0 +1,107 @@
+<section class="dashboard-page">
+
+  <div class="container">
+
+    <div class="header">
+
+      <span class="badge">
+        Panel de Administración
+      </span>
+
+      <h1>
+        Turnos
+      </h1>
+
+    </div>
+
+    <ng-container *ngIf="turnos$ | async as turnos; else cargando">
+
+      <p
+        *ngIf="turnos.length === 0"
+        class="vacio"
+      >
+        Todavía no hay turnos reservados.
+      </p>
+
+      <div class="turnos-grid">
+
+        <div
+          *ngFor="let turno of turnos"
+          class="card turno-card"
+        >
+
+          <div class="turno-top">
+
+            <h3>{{ turno.nombre }}</h3>
+
+            <mat-chip
+              [class.chip-pendiente]="turno.estado === 'pendiente'"
+              [class.chip-confirmado]="turno.estado === 'confirmado'"
+              [class.chip-cancelado]="turno.estado === 'cancelado'"
+            >
+              {{ turno.estado }}
+            </mat-chip>
+
+          </div>
+
+          <p class="dato">
+            <strong>Servicio:</strong> {{ turno.servicio }}
+          </p>
+
+          <p class="dato">
+            <strong>Fecha:</strong> {{ turno.fecha }} — {{ turno.hora }}
+          </p>
+
+          <p class="dato">
+            <strong>Teléfono:</strong> {{ turno.telefono }}
+          </p>
+
+          <div class="turno-acciones">
+
+            <button
+              mat-stroked-button
+              color="primary"
+              [disabled]="turno.estado === 'confirmado'"
+              (click)="confirmar(turno)"
+            >
+              Confirmar
+            </button>
+
+            <button
+              mat-stroked-button
+              [disabled]="turno.estado === 'cancelado'"
+              (click)="cancelar(turno)"
+            >
+              Cancelar
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="eliminar(turno)"
+              aria-label="Eliminar turno"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </ng-container>
+
+    <ng-template #cargando>
+
+      <p class="vacio">
+        Cargando turnos...
+      </p>
+
+    </ng-template>
+    <app-gestor-servicios></app-gestor-servicios>
+    <app-gestor-horarios></app-gestor-horarios>
+
+  </div>
+
+</section>

@@ -1,0 +1,245 @@
+.navbar {
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 80px;
+
+  padding: 0 40px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  z-index: 1000;
+
+  background: transparent;
+
+  transition:
+    background .4s ease,
+    backdrop-filter .4s ease,
+    box-shadow .4s ease;
+
+}
+
+/* 🔥 ESTADO AL HACER SCROLL */
+
+.navbar.scrolled {
+
+  background: rgba(10,10,10,.88);
+
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 4px 30px rgba(0,0,0,.35);
+
+}
+
+.logo {
+
+  font-family: var(--font-title);
+
+  font-size: 22px;
+
+  letter-spacing: 4px;
+  color: whitesmoke;
+
+}
+
+.desktop-menu {
+
+  display: flex;
+  align-items: center;
+
+  gap: 30px;
+
+}
+
+.desktop-menu a {
+
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  letter-spacing: 1px;
+
+  position: relative;
+
+  transition: .3s ease;
+
+}
+
+/* 🔥 Hover elegante */
+
+.desktop-menu a::after {
+
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  bottom: -6px;
+
+  width: 0;
+  height: 1px;
+
+  background: var(--accent);
+
+  transition: .3s ease;
+
+}
+
+.desktop-menu a:hover {
+
+  color: var(--accent);
+
+}
+
+.desktop-menu a:hover::after {
+
+  width: 100%;
+
+}
+
+/* 📱 MOBILE */
+
+@media (max-width: 768px) {
+
+  .navbar {
+
+    padding: 0 20px;
+
+    height: 70px;
+
+  }
+
+  .desktop-menu {
+
+    gap: 15px;
+
+  }
+
+  .desktop-menu a {
+
+    font-size: 12px;
+
+  }
+
+  .logo {
+
+    font-size: 18px;
+
+  }
+
+}
+/* ===========================
+   MENÚ MÓVIL (hamburguesa)
+=========================== */
+
+.menu-toggle {
+
+  display: none;
+
+}
+
+@media (max-width: 768px) {
+
+  .navbar {
+
+    padding: 0 16px;
+
+    justify-content: space-between;
+
+  }
+
+  .logo {
+
+    font-size: 14px;
+
+    letter-spacing: 3px;
+
+    white-space: nowrap;
+
+  }
+
+  .menu-toggle {
+
+    display: inline-flex;
+
+    color: var(--color-text);
+
+  }
+
+  .desktop-menu {
+
+    position: absolute;
+
+    top: 100%;
+
+    left: 0;
+
+    right: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+
+    background: var(--color-surface);
+
+    border-top: 1px solid var(--color-border);
+
+    border-bottom: 1px solid var(--color-border);
+
+    box-shadow: var(--shadow-card);
+
+    max-height: 0;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    overflow: hidden;
+
+    transition:
+      max-height .3s ease,
+      opacity .3s ease,
+      visibility .3s;
+
+  }
+
+  .desktop-menu.abierto {
+
+    max-height: 400px;
+
+    opacity: 1;
+
+    visibility: visible;
+
+  }
+
+  .desktop-menu a {
+
+    margin: 0;
+
+    padding: 18px 24px;
+
+    border-bottom: 1px solid var(--color-border);
+
+    cursor: pointer;
+
+  }
+
+  .desktop-menu a:last-child {
+
+    border-bottom: none;
+
+  }
+
+}
+

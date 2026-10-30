@@ -1,0 +1,59 @@
+<mat-toolbar
+  class="navbar"
+  [class.scrolled]="scrolled || menuAbierto"
+>
+
+  <div class="logo">
+    MIO ENCANTO BEAUTY
+  </div>
+
+  <button
+    mat-icon-button
+    type="button"
+    class="menu-toggle"
+    (click)="alternarMenu()"
+    [attr.aria-expanded]="menuAbierto"
+    aria-controls="menu-principal"
+    [attr.aria-label]="menuAbierto ? 'Cerrar menú' : 'Abrir menú'"
+  >
+    <mat-icon>{{ menuAbierto ? 'close' : 'menu' }}</mat-icon>
+  </button>
+
+  <nav
+    id="menu-principal"
+    class="desktop-menu"
+    [class.abierto]="menuAbierto"
+  >
+
+    <a routerLink="/" (click)="cerrarMenu()">
+      INICIO
+    </a>
+
+    <a routerLink="/reservar" (click)="cerrarMenu()">
+      RESERVAR
+    </a>
+
+    <ng-container *ngIf="authService.user$ | async as usuario; else noLogueado">
+
+      <a routerLink="/dashboard" (click)="cerrarMenu()">
+        DASHBOARD
+      </a>
+
+      <a (click)="cerrarSesion()">
+        CERRAR SESIÓN
+      </a>
+
+    </ng-container>
+
+    <ng-template #noLogueado>
+
+      <a routerLink="/login" (click)="cerrarMenu()">
+        ADMIN
+      </a>
+
+    </ng-template>
+
+  </nav>
+
+</mat-toolbar>
+
