@@ -1,8 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { TurnoService } from '../../core/services/turno.service';
+import { ServicioService } from '../../core/services/servicio.service';
 import { Turno } from '../../core/models/turno.model';
+
+import { GestorServiciosComponent } from './gestor-servicios/gestor-servicios.component';
+import { GestorHorariosComponent } from './gestor-horarios/gestor-horarios.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,9 +17,6 @@ import {
   MatSnackBar,
   MatSnackBarModule
 } from '@angular/material/snack-bar';
-import { GestorServiciosComponent } from './gestor-servicios/gestor-servicios.component';
-import { GestorHorariosComponent } from './gestor-horarios/gestor-horarios.component';
-
 
 @Component({
   selector: 'app-dashboard',
@@ -33,9 +36,22 @@ import { GestorHorariosComponent } from './gestor-horarios/gestor-horarios.compo
 export class DashboardComponent {
 
   private turnoService = inject(TurnoService);
+  private servicioService = inject(ServicioService);
   private snackBar = inject(MatSnackBar);
 
-  turnos$ = this.turnoService.obtenerTurnos$();
+  /**
+   * Turnos activos, del más próximo al más lejano.
+   * Los atendidos pasan al historial y no se muestran acá.
+   */
+  turnos$ = this.turnoService.obtenerTurnos$().pipe(
+    map(turnos =>
+      turnos
+        .filter(turno => turno.estado !== 'completado')
+        .sort((a, b) =>
+          (a.fecha + a.hora).localeCompare(b.fecha + b.hora)
+        )
+    )
+  );
 
   async confirmar(turno: Turno): Promise<void> {
 
@@ -46,6 +62,50 @@ export class DashboardComponent {
   async cancelar(turno: Turno): Promise<void> {
 
     await this.cambiarEstado(turno, 'cancelado');
+
+  }
+
+  /**
+   * Marca el turno como atendido y guarda el precio vigente
+   * del servicio. Ofrece "Deshacer" por si fue un error.
+   */
+  async atender(turno: Turno): Promise<void> {
+
+    try {
+
+      const servicios = await firstValueFrom(
+        this.servicioService.obtenerServicios$()
+      );
+
+      const precio =
+        servicios.find(s => s.nombre === turno.servicio)?.precio ?? 0;
+
+      await this.turnoService.completarTurno(turno.id, precio);
+
+      this.snackBar
+        .open(
+          'Turno marcado como atendido',
+          'Deshacer',
+          {
+            duration: 6000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: 'success-snackbar'
+          }
+        )
+        .onAction()
+        .subscribe(() => this.deshacerAtendido(turno));
+
+    } catch (err: unknown) {
+
+      console.error('Error al marcar como atendido:', err);
+
+      this.mostrarMensaje(
+        'Ocurrió un error al actualizar',
+        'error-snackbar'
+      );
+
+    }
 
   }
 
@@ -75,6 +135,31 @@ export class DashboardComponent {
 
       this.mostrarMensaje(
         'Ocurrió un error al eliminar',
+        'error-snackbar'
+      );
+
+    }
+
+  }
+
+  private async deshacerAtendido(turno: Turno): Promise<void> {
+
+    try {
+
+      // "turno" conserva el estado que tenía antes de atenderlo.
+      await this.turnoService.deshacerCompletado(
+        turno.id,
+        turno.estado
+      );
+
+      this.mostrarMensaje('Se deshizo el cambio');
+
+    } catch (err: unknown) {
+
+      console.error('Error al deshacer:', err);
+
+      this.mostrarMensaje(
+        'No se pudo deshacer',
         'error-snackbar'
       );
 

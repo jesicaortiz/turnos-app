@@ -1,7 +1,8 @@
 export type EstadoTurno =
   | 'pendiente'
   | 'confirmado'
-  | 'cancelado';
+  | 'cancelado'
+  | 'completado';
 
 export interface Turno {
 
@@ -20,5 +21,11 @@ export interface Turno {
   estado: EstadoTurno;
 
   creadoEn: string;
+
+  /** Precio del servicio al momento de la atención (solo en turnos completados). */
+  precio?: number;
+
+  /** Momento en que se marcó como atendido (ISO). */
+  completadoEn?: string;
 
 }

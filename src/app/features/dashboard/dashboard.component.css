@@ -128,3 +128,6 @@ mat-chip.chip-cancelado {
   }
 
 }
+.turno-acciones {
+  flex-wrap: wrap;
+}

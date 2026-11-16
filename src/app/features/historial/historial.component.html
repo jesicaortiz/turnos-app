@@ -1,0 +1,217 @@
+<section class="historial-page">
+
+  <div class="container">
+
+    <div class="header">
+
+      <span class="badge">
+        Panel de Administración
+      </span>
+
+      <h1>
+        Historial
+      </h1>
+
+      <p>
+        Consultá las atenciones realizadas en el local.
+      </p>
+
+    </div>
+
+    <ng-container *ngIf="vista$ | async as vista; else cargando">
+
+      <form
+        [formGroup]="filtrosForm"
+        class="filtros"
+      >
+
+        <mat-form-field appearance="outline" class="filtro-busqueda">
+
+          <mat-label>Buscar por nombre o teléfono</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="busqueda"
+          >
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Servicio</mat-label>
+
+          <mat-select formControlName="servicio">
+
+            <mat-option value="">
+              Todos los servicios
+            </mat-option>
+
+            <mat-option
+              *ngFor="let servicio of vista.servicios"
+              [value]="servicio"
+            >
+              {{ servicio }}
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Mostrar</mat-label>
+
+          <mat-select formControlName="estado">
+
+            <mat-option value="completado">Atendidos</mat-option>
+
+            <mat-option value="cancelado">Cancelados</mat-option>
+
+            <mat-option value="todos">Todos</mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Desde</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="pickerDesde"
+            formControlName="desde"
+            readonly
+          >
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="pickerDesde"
+          >
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #pickerDesde></mat-datepicker>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Hasta</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="pickerHasta"
+            formControlName="hasta"
+            readonly
+          >
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="pickerHasta"
+          >
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #pickerHasta></mat-datepicker>
+
+        </mat-form-field>
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="btn-limpiar"
+          (click)="limpiarFiltros()"
+        >
+          Limpiar filtros
+        </button>
+
+      </form>
+
+      <div class="resumen">
+
+        <div class="card resumen-item">
+
+          <span class="resumen-label">Atenciones</span>
+
+          <strong>{{ vista.cantidadAtendidos }}</strong>
+
+        </div>
+
+        <div class="card resumen-item">
+
+          <span class="resumen-label">Total facturado</span>
+
+          <strong>
+            {{ vista.total | currency:'ARS':'symbol-narrow':'1.0-0' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <p
+        *ngIf="vista.items.length === 0"
+        class="vacio"
+      >
+        No hay registros para los filtros elegidos.
+      </p>
+
+      <div class="lista">
+
+        <div
+          *ngFor="let turno of vista.items"
+          class="card item"
+        >
+
+          <div class="item-fecha">
+
+            <strong>{{ verFecha(turno.fecha) }}</strong>
+
+            <span>{{ turno.hora }}</span>
+
+          </div>
+
+          <div class="item-cliente">
+
+            <strong>{{ turno.nombre }}</strong>
+
+            <span>{{ turno.telefono }}</span>
+
+          </div>
+
+          <div class="item-servicio">
+
+            <span>{{ turno.servicio }}</span>
+
+            <strong *ngIf="turno.estado === 'completado' && turno.precio != null">
+              {{ turno.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}
+            </strong>
+
+          </div>
+
+          <mat-chip
+            [class.chip-completado]="turno.estado === 'completado'"
+            [class.chip-cancelado]="turno.estado === 'cancelado'"
+            [class.chip-pendiente]="turno.estado === 'pendiente'"
+            [class.chip-confirmado]="turno.estado === 'confirmado'"
+          >
+            {{ etiquetaEstado(turno.estado) }}
+          </mat-chip>
+
+        </div>
+
+      </div>
+
+    </ng-container>
+
+    <ng-template #cargando>
+
+      <p class="vacio">
+        Cargando historial...
+      </p>
+
+    </ng-template>
+
+  </div>
+
+</section>

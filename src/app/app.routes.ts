@@ -5,6 +5,8 @@ import { ReservarComponent } from './features/reservar/reservar.component';
 import { LoginComponent } from './features/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
+import { HistorialComponent } from './features/historial/historial.component';
+
 
 export const routes: Routes = [
 
@@ -27,6 +29,12 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [authGuard]
+  },
+
+  {
+  path: 'historial',
+  component: HistorialComponent,
+  canActivate: [authGuard]
   }
 
 ];

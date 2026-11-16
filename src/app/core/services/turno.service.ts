@@ -4,6 +4,7 @@ import {
   collection,
   collectionData,
   deleteDoc,
+  deleteField,
   updateDoc,
   doc,
   docData,
@@ -47,6 +48,44 @@ export class TurnoService {
     const turnoDoc = doc(this.firestore, this.TURNOS, id);
 
     await updateDoc(turnoDoc, { estado });
+
+  }
+
+  /**
+   * Marca el turno como atendido y guarda el precio del
+   * servicio de ese momento, para que el historial no cambie
+   * si más adelante se modifican los precios.
+   */
+  async completarTurno(
+    id: string,
+    precio: number
+  ): Promise<void> {
+
+    const turnoDoc = doc(this.firestore, this.TURNOS, id);
+
+    await updateDoc(turnoDoc, {
+      estado: 'completado',
+      precio,
+      completadoEn: new Date().toISOString()
+    });
+
+  }
+
+  /**
+   * Revierte un "atendido" hecho por error.
+   */
+  async deshacerCompletado(
+    id: string,
+    estadoAnterior: Turno['estado']
+  ): Promise<void> {
+
+    const turnoDoc = doc(this.firestore, this.TURNOS, id);
+
+    await updateDoc(turnoDoc, {
+      estado: estadoAnterior,
+      precio: deleteField(),
+      completadoEn: deleteField()
+    });
 
   }
 
