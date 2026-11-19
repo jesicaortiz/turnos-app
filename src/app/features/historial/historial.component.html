@@ -149,6 +149,23 @@
 
       </div>
 
+      <div
+        *ngIf="vista.cantidadAtendidos > 0"
+        class="acciones-lista"
+      >
+
+        <button
+          mat-stroked-button
+          color="warn"
+          type="button"
+          (click)="eliminarAtendidos(vista.items)"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+          Eliminar {{ vista.cantidadAtendidos === 1 ? '1 atención mostrada' : vista.cantidadAtendidos + ' atenciones mostradas' }}
+        </button>
+
+      </div>
+
       <p
         *ngIf="vista.items.length === 0"
         class="vacio"
@@ -197,6 +214,18 @@
           >
             {{ etiquetaEstado(turno.estado) }}
           </mat-chip>
+
+          <button
+            *ngIf="puedeEliminarse(turno)"
+            mat-icon-button
+            color="warn"
+            type="button"
+            class="btn-borrar"
+            (click)="eliminar(turno)"
+            aria-label="Eliminar registro"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
 
         </div>
 

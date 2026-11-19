@@ -22,6 +22,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import {
+  MatSnackBar,
+  MatSnackBarModule
+} from '@angular/material/snack-bar';
 
 type FiltroEstado = 'completado' | 'cancelado' | 'todos';
 
@@ -53,7 +57,8 @@ interface VistaHistorial {
     MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSnackBarModule
   ],
   templateUrl: './historial.component.html',
   styleUrl: './historial.component.css'
@@ -62,6 +67,7 @@ export class HistorialComponent {
 
   private turnoService = inject(TurnoService);
   private horarioService = inject(HorarioService);
+  private snackBar = inject(MatSnackBar);
 
   filtrosForm = new FormGroup({
 
@@ -93,6 +99,91 @@ export class HistorialComponent {
   limpiarFiltros(): void {
 
     this.filtrosForm.reset();
+
+  }
+
+  /** Solo se pueden borrar registros ya cerrados (atendidos o cancelados). */
+  puedeEliminarse(turno: Turno): boolean {
+
+    return turno.estado === 'completado' || turno.estado === 'cancelado';
+
+  }
+
+  async eliminar(turno: Turno): Promise<void> {
+
+    const confirmado = confirm(
+      `¿Eliminar el registro de ${turno.nombre} ` +
+      `(${this.verFecha(turno.fecha)} ${turno.hora})? ` +
+      'Esta acción no se puede deshacer.'
+    );
+
+    if (!confirmado) {
+      return;
+    }
+
+    try {
+
+      await this.turnoService.eliminarRegistro(turno);
+
+      this.mostrarMensaje('Registro eliminado');
+
+    } catch (err: unknown) {
+
+      console.error('Error al eliminar el registro:', err);
+
+      this.mostrarMensaje(
+        'Ocurrió un error al eliminar',
+        'error-snackbar'
+      );
+
+    }
+
+  }
+
+  /**
+   * Elimina todas las atenciones que se están viendo en la lista
+   * (respetando los filtros). Los cancelados, pendientes y
+   * confirmados no se tocan.
+   */
+  async eliminarAtendidos(items: Turno[]): Promise<void> {
+
+    const ids = items
+      .filter(turno => turno.estado === 'completado')
+      .map(turno => turno.id);
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    const cantidad = ids.length === 1
+      ? '1 atención'
+      : `${ids.length} atenciones`;
+
+    const confirmado = confirm(
+      `¿Eliminar definitivamente ${cantidad} del historial? ` +
+      'Esta acción no se puede deshacer.'
+    );
+
+    if (!confirmado) {
+      return;
+    }
+
+    try {
+
+      await this.turnoService.eliminarAtendidos(ids);
+
+      this.mostrarMensaje(`Se eliminaron ${cantidad}`);
+
+    } catch (err: unknown) {
+
+      console.error('Error al eliminar las atenciones:', err);
+
+      this.mostrarMensaje(
+        'Ocurrió un error al eliminar',
+        'error-snackbar'
+      );
+
+    }
 
   }
 
@@ -164,6 +255,24 @@ export class HistorialComponent {
       )
 
     };
+
+  }
+
+  private mostrarMensaje(
+    mensaje: string,
+    panelClass = 'success-snackbar'
+  ): void {
+
+    this.snackBar.open(
+      mensaje,
+      'Cerrar',
+      {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass
+      }
+    );
 
   }
 

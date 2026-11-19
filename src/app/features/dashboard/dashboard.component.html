@@ -20,7 +20,7 @@
         *ngIf="turnos.length === 0"
         class="vacio"
       >
-        Todavía no hay turnos reservados.
+        No hay turnos pendientes.
       </p>
 
       <div class="turnos-grid">
@@ -76,6 +76,15 @@
             </button>
 
             <button
+              mat-flat-button
+              color="primary"
+              [disabled]="turno.estado === 'cancelado'"
+              (click)="atender(turno)"
+            >
+              Atendido
+            </button>
+
+            <button
               mat-icon-button
               color="warn"
               (click)="eliminar(turno)"
@@ -99,7 +108,9 @@
       </p>
 
     </ng-template>
+
     <app-gestor-servicios></app-gestor-servicios>
+
     <app-gestor-horarios></app-gestor-horarios>
 
   </div>

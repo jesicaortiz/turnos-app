@@ -8,7 +8,8 @@ import {
   updateDoc,
   doc,
   docData,
-  runTransaction
+  runTransaction,
+  writeBatch
 } from '@angular/fire/firestore';
 import { Observable, firstValueFrom } from 'rxjs';
 
@@ -117,6 +118,57 @@ export class TurnoService {
       }
 
     });
+
+  }
+
+  /**
+   * Elimina un registro del historial.
+   *
+   * - Atendido: solo se borra el registro (el horario ya pasó).
+   * - Cancelado: además se libera el horario, que seguía ocupado.
+   */
+  async eliminarRegistro(turno: Turno): Promise<void> {
+
+    if (turno.estado === 'completado') {
+
+      await deleteDoc(
+        doc(this.firestore, this.TURNOS, turno.id)
+      );
+
+      return;
+
+    }
+
+    await this.eliminarTurno(
+      turno.id,
+      turno.fecha,
+      turno.hora
+    );
+
+  }
+
+  /**
+   * Elimina varias atenciones ya realizadas de una vez.
+   * Firestore permite hasta 500 operaciones por lote,
+   * por eso se divide en tandas.
+   */
+  async eliminarAtendidos(ids: string[]): Promise<void> {
+
+    const TAMANO_LOTE = 400;
+
+    for (let i = 0; i < ids.length; i += TAMANO_LOTE) {
+
+      const lote = writeBatch(this.firestore);
+
+      ids
+        .slice(i, i + TAMANO_LOTE)
+        .forEach(id =>
+          lote.delete(doc(this.firestore, this.TURNOS, id))
+        );
+
+      await lote.commit();
+
+    }
 
   }
 
